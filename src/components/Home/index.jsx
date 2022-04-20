@@ -34,7 +34,7 @@ const columns = [
 
 const Home = () => {
 
-  const users = useSelector((state) => state.users.value)
+  const users = useSelector((state) => state.users.users)
 
   return (
     <>

@@ -4,6 +4,11 @@ export default function UserForm(props) {
 
     const { onSubmit, onSubmitFaliled, initUser } = props
 
+    const handleClear = (e) => {
+        e.preventDefault()
+        localStorage.clear()
+    }
+
     return (
         <>
             <h1 className='title'>Add User</h1>
@@ -29,7 +34,7 @@ export default function UserForm(props) {
                         },
                     ]}
                 >
-                    <Input value={initUser?.username}/>
+                    <Input value={initUser?.username} />
                 </Form.Item>
 
                 <Form.Item
@@ -67,6 +72,19 @@ export default function UserForm(props) {
                     <Button type="primary" htmlType="submit">
                         Add
                     </Button>
+
+                </Form.Item>
+
+                <Form.Item
+                    wrapperCol={{
+                        offset: 4,
+                        span: 16,
+                    }}
+                >
+                    <Button onClick={handleClear}>
+                        Clear Localstorage
+                    </Button>
+
                 </Form.Item>
             </Form>
         </>
