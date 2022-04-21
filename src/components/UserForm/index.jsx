@@ -1,17 +1,21 @@
 import { Button, Form, Input } from 'antd';
+import { Link } from 'react-router-dom';
 
 export default function UserForm(props) {
 
-    const { onSubmit, onSubmitFaliled, initUser } = props
+    const { onSubmit, onSubmitFaliled, initUser, type } = props
 
-    const handleClear = (e) => {
-        e.preventDefault()
-        localStorage.clear()
-    }
+    // const handleClear = (e) => {
+    //     e.preventDefault()
+    //     localStorage.clear()
+    // }
 
     return (
         <>
-            <h1 className='title'>Add User</h1>
+            <div className="title">
+                <h1>Add User</h1>
+                <Link to="/">Back</Link>
+            </div>
             <Form
                 name="user"
                 labelCol={{
@@ -20,6 +24,7 @@ export default function UserForm(props) {
                 wrapperCol={{
                     span: 16,
                 }}
+                initialValues={initUser}
                 onFinish={onSubmit}
                 onFinishFailed={onSubmitFaliled}
                 autoComplete="off"
@@ -27,6 +32,7 @@ export default function UserForm(props) {
                 <Form.Item
                     label="Username"
                     name="username"
+                    disabled
                     rules={[
                         {
                             required: true,
@@ -34,12 +40,12 @@ export default function UserForm(props) {
                         },
                     ]}
                 >
-                    <Input value={initUser?.username} />
+                    <Input value={initUser?.username} disabled={type === 'modify' ? true : false}/>
                 </Form.Item>
 
                 <Form.Item
                     label="Password"
-                    name="phone"
+                    name="password"
                     rules={[
                         {
                             required: true,
@@ -70,11 +76,11 @@ export default function UserForm(props) {
                     }}
                 >
                     <Button type="primary" htmlType="submit">
-                        Add
+                        {type === 'add' ? 'Add' : 'Save'}
                     </Button>
 
                 </Form.Item>
-
+{/* 
                 <Form.Item
                     wrapperCol={{
                         offset: 4,
@@ -85,7 +91,7 @@ export default function UserForm(props) {
                         Clear Localstorage
                     </Button>
 
-                </Form.Item>
+                </Form.Item> */}
             </Form>
         </>
     )

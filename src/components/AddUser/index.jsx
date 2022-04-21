@@ -1,12 +1,20 @@
+import { message } from "antd";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { add } from "../../slices";
 import UserForm from "../UserForm"
 
 export default function AddUser() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const handleSubmit = (data) => {
-        dispatch(add(data))
+        const dispatchUser = dispatch(add(data))
+        if (dispatchUser.type === 'users/add') {
+            message.success('Add Successful!')
+            navigate("/", { replace: true });
+        }
+        else message.error('Add Error!')
     }
 
     const onSubmitFailed = (errorInfo) => {
@@ -14,10 +22,6 @@ export default function AddUser() {
     };
 
     return (
-        <>
-        
-            <UserForm onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
-        
-        </>
+        <UserForm type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
     )
 }
