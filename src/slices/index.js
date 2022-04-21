@@ -12,6 +12,10 @@ export const userSlice = createSlice({
       state.value.push(action.payload)
       localStorage.setItem('users', JSON.stringify(state.value))
     },
+    addUser: (state, action) => {
+      // state.value.push(action.payload)
+      // localStorage.setItem('users', JSON.stringify(state.value))
+    },
     modify: (state, action) => {
       state.value = state.value.filter(x => x.username !== action.payload.username)
       state.value.push(action.payload)
@@ -24,6 +28,8 @@ export const userSlice = createSlice({
   },
 })
 
-export const { add, remove, modify } = userSlice.actions
+export const userActions = userSlice.actions
+
+export const { add, addUser, remove, modify } = userSlice.actions
 
 export default userSlice.reducer
