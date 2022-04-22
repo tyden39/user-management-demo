@@ -26,3 +26,8 @@
     margin-bottom: 14px;
     display: block;
 }
+
+.global-message {
+    position: absolute;
+    right: 10px;
+}

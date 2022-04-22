@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function UserForm(props) {
 
-    const { onSubmit, onSubmitFaliled, initUser, type } = props
+    const { onSubmit, onSubmitFaliled, initUser, type, title } = props
 
     // const handleClear = (e) => {
     //     e.preventDefault()
@@ -13,8 +13,7 @@ export default function UserForm(props) {
     return (
         <>
             <div className="title">
-                <h1>Add User</h1>
-                <Link to="/">Back</Link>
+                <h1>{title}</h1>
             </div>
             <Form
                 name="user"
@@ -74,6 +73,7 @@ export default function UserForm(props) {
                         offset: 4,
                         span: 16,
                     }}
+                    style={{textAlign: 'center'}}
                 >
                     <Button type="primary" htmlType="submit">
                         {type === 'add' ? 'Add' : 'Save'}

@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { add } from "../../slices";
 import UserForm from "../UserForm"
 
-export default function AddUser() {
+export default function AddUser(props) {
+    const { setStatus } = props
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -12,7 +13,7 @@ export default function AddUser() {
         const dispatchUser = dispatch(add(data))
         if (dispatchUser.type === 'users/add') {
             message.success('Add Successful!')
-            navigate("/", { replace: true });
+            setStatus(false)
         }
         else message.error('Add Error!')
     }
@@ -22,6 +23,6 @@ export default function AddUser() {
     };
 
     return (
-        <UserForm type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
+        <UserForm title='User Add'  type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
     )
 }

@@ -1,12 +1,17 @@
-import { all, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { add, userActions } from './slices';
+import { all, put, takeLatest } from 'redux-saga/effects';
+import { userActions } from './slices';
 
 function* addUser(action) {
    yield put(userActions.add(action.payload))
 }
 
-function* userSaga() {
+function* modifyUser(action) {
+   yield put(userActions.modify(action.payload))
+}
+
+export function* userSaga() {
    yield takeLatest(userActions.addUser, addUser);
+   yield takeLatest(userActions.modifyUser, modifyUser);
 }
 
 export default function* rootSaga() {
