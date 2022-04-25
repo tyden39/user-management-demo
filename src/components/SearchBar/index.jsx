@@ -1,16 +1,17 @@
 import { Input } from "antd";
-import { useDispatch } from "react-redux";
-import { userActions } from "../../slices";
+import { useDispatch, useSelector } from "react-redux";
+import { userActions } from "../users/userSlice";
 
 
 export default function SearchBar() {
     const dispatch = useDispatch()
+    const search = useSelector((state) => state.users.search)
 
     const onSubmit = (e) => {
-        dispatch(userActions.search(e.target.value))
+        dispatch(userActions.get({search: e.target.value, currPage: 1}))
     }
 
     return (
-        <Input placeholder="Search" onInput={onSubmit}/>
+        <Input placeholder="Search" onInput={onSubmit} value={search}/>
     )
 }

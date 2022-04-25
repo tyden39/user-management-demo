@@ -1,13 +1,11 @@
 import { message } from "antd";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { add } from "../../slices";
-import UserForm from "../UserForm"
+import UserForm from "../UserForm";
+import { add } from "./userSlice";
 
 export default function AddUser(props) {
     const { setStatus } = props
     const dispatch = useDispatch()
-    const navigate = useNavigate()
 
     const handleSubmit = (data) => {
         const dispatchUser = dispatch(add(data))

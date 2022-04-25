@@ -1,15 +1,14 @@
 import { message } from "antd";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { modify } from "../../slices";
 import UserForm from "../UserForm";
+import { modify } from "./userSlice";
 
 export default function ModifyUser(props) {
     const dispatch = useDispatch()
-    const users = useSelector(state => state.users.value)
+    const users = useSelector(state => state.users)
     const { data, setStatus } = props;
-    const [user] = useState(users.find(x => x.username === data.username));
+    const [user] = useState(users.data.find(x => x.username === data.username));
 
     const handleSubmit = (data) => {
         const dispatchUser = dispatch(modify(data))

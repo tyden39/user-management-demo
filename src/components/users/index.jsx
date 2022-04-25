@@ -1,15 +1,14 @@
-import { Button, message, Modal, notification, Popconfirm, Space, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Modal, notification, Pagination, Popconfirm, Space, Table } from 'antd';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { remove, userActions } from '../../slices';
-import AddUser from '../AddUser';
-import ModifyUser from '../ModifyUser';
 import SearchBar from '../SearchBar';
+import AddUser from './AddUser';
+import ModifyUser from './ModifyUser';
+import { remove, userActions } from './userSlice';
 
 const Home = () => {
 
-  const users = useSelector((state) => state.users.value)
+  const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
   const [modal, setModal] = useState({title: '', visible: false, type: '', data: {}})
 
@@ -20,6 +19,10 @@ const Home = () => {
         message: 'deleted',
         placement: 'bottomRight'
       });
+  }
+
+  const onChangePage = (page, pageSize) => {
+    dispatch(userActions.get({currPage: page, pageSize: pageSize}))
   }
   
   const handleAdd = (username) => {
@@ -93,7 +96,8 @@ const Home = () => {
           {modal.type === 'modify' && <ModifyUser data={modal.data} setStatus={(status) => setModal({...modal, visible: status})}/>}
         </Modal>
       </div>
-      <Table columns={columns} dataSource={users} rowKey="username" />
+      <Table columns={columns} dataSource={users.data} rowKey="username" pagination={false}/>
+      <Pagination style={{textAlign: 'right', margin: '16px 0'}} current={users.currPage} total={users.count} onChange={onChangePage}/>
     </>
   )
 }

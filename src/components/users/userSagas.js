@@ -1,5 +1,5 @@
 import { all, put, takeLatest } from 'redux-saga/effects';
-import { userActions } from './slices';
+import { userActions } from './userSlice';
 
 function* addUser(action) {
    yield put(userActions.add(action.payload))
