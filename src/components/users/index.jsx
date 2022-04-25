@@ -38,7 +38,7 @@ const Home = () => {
       title: 'UserName',
       dataIndex: 'username',
       key: 'username',
-      sorter: (a, b) => a.username.localeCompare(b.username),
+      // sorter: (a, b) => a.username.toString().localeCompare(b.username),
       // sorter: true,
       width: '30%',
     },
@@ -92,8 +92,8 @@ const Home = () => {
           width={700}
           onCancel={() => setModal({...modal, visible: false})}
         >
-          {modal.type === 'add' && <AddUser setStatus={(status) => setModal({...modal, visible: status})}/>}
-          {modal.type === 'modify' && <ModifyUser data={modal.data} setStatus={(status) => setModal({...modal, visible: status})}/>}
+          {modal.type === 'add' && <AddUser setModalClose={(status) => setModal({...modal, visible: status})}/>}
+          {modal.type === 'modify' && <ModifyUser data={modal.data} setModalClose={(status) => setModal({...modal, visible: status})}/>}
         </Modal>
       </div>
       <Table columns={columns} dataSource={users.data} rowKey="username" pagination={false}/>

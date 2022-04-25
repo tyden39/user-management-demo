@@ -1,19 +1,17 @@
-import { message } from "antd";
 import { useDispatch } from "react-redux";
 import UserForm from "../UserForm";
-import { add } from "./userSlice";
+import { userActions } from "./userSlice";
 
 export default function AddUser(props) {
-    const { setStatus } = props
+    const { setModalClose } = props
     const dispatch = useDispatch()
 
     const handleSubmit = (data) => {
-        const dispatchUser = dispatch(add(data))
-        if (dispatchUser.type === 'users/add') {
-            message.success('Add Successful!')
-            setStatus(false)
+        for(let i = 0; i < 200; i++ ) {
+
+            dispatch(userActions.add({...data, username: i}))
         }
-        else message.error('Add Error!')
+        setModalClose(false)
     }
 
     const onSubmitFailed = (errorInfo) => {
@@ -21,6 +19,6 @@ export default function AddUser(props) {
     };
 
     return (
-        <UserForm title='User Add'  type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
+        <UserForm title='User Add' type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
     )
 }
