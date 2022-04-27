@@ -1,6 +1,7 @@
-import { Button, Modal, notification, Pagination, Popconfirm, Space, Table } from 'antd';
+import { Button, Modal, Pagination, Popconfirm, Space, Table } from 'antd';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ExportCSV } from '../ExportCSV';
 import SearchBar from '../SearchBar';
 import AddUser from './AddUser';
 import ModifyUser from './ModifyUser';
@@ -13,12 +14,7 @@ const Home = () => {
   const [modal, setModal] = useState({title: '', visible: false, type: '', data: {}})
 
   const handleDelete = (username) => {
-    const userDispatch = dispatch(remove(username))
-    if (userDispatch.type === userActions.remove.type)
-      notification.success({
-        message: 'deleted',
-        placement: 'bottomRight'
-      });
+    dispatch(remove(username))
   }
 
   const onChangePage = (page, pageSize) => {
@@ -77,11 +73,16 @@ const Home = () => {
     },
   ];
 
+  const getData = () => {
+    return JSON.parse(localStorage.getItem('users')).data
+  }
+
   return (
     <>
       <div className="title">
         <h1>Users</h1>
         <Button onClick={handleAdd} type={'primary'} style={{marginBottom: '16px'}}>Add</Button>
+        <ExportCSV getData={getData} fileName={'fileName'}/>
         <SearchBar />
 
         <Modal
@@ -90,6 +91,7 @@ const Home = () => {
           visible={modal.visible}
           footer={null}
           width={700}
+          zIndex={1}
           onCancel={() => setModal({...modal, visible: false})}
         >
           {modal.type === 'add' && <AddUser setModalClose={(status) => setModal({...modal, visible: status})}/>}

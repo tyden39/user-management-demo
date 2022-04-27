@@ -7,10 +7,11 @@ export default function AddUser(props) {
     const dispatch = useDispatch()
 
     const handleSubmit = (data) => {
-        for(let i = 0; i < 200; i++ ) {
-
-            dispatch(userActions.add({...data, username: i}))
-        }
+        // for(let i = 0; i < 200; i++ ) {
+        //     dispatch(userActions.add({...data, username: i}))
+        // }
+        
+        dispatch(userActions.add(data))
         setModalClose(false)
     }
 

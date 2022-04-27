@@ -10,6 +10,7 @@ export default function ModifyUser(props) {
     const [user] = useState(users.data.find(x => x.username === data.username));
 
     const handleSubmit = (data) => {
+        // console.log(data)
         dispatch(userActions.modify(data))
         setModalClose(false)
     }
@@ -19,8 +20,6 @@ export default function ModifyUser(props) {
     };
 
     return (
-        <>
-            <UserForm title='User Modify' type='modify' initUser={user} onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
-        </>
+        <UserForm title='User Modify' type='modify' initUser={user} onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} />
     )
 }

@@ -19,47 +19,24 @@ export const userSlice = createSlice({
     get: (state, action) => {
       state.loading = true
     },
-    getSuccess: (state, action) => {
-      state.search = action.payload.search
-      state.pageSize = action.payload.pageSize
-      state.search = action.payload.search
-      state.currPage = action.payload.currPage
-      state.count = action.payload.count
-      state.data = action.payload.data
-    },
-    getFailed: (state, action) => {},
-
     add: (state) => {
       state.loading = true
     },
-    addSuccess: (state, action) => {
-      state.loading = action.payload.loading
-      state.search = action.payload.search
-      state.currPage = action.payload.currPage
-      state.pageSize = action.payload.pageSize
-      state.data = action.payload.data
-      state.count = action.payload.count
-    },
-    addFailed: (state, action) => {},
-
     modify: (state, action) => {
-      // state.value = state.value.filter(x => x.username !== action.payload.username)
-      // state.value.push(action.payload)
-      // localStorage.setItem('users', JSON.stringify(state.value))
+      state.loading = true
     },
-    modifySuccess: (state, action) => {
-      state.loading = action.payload.loading
+    remove:(state, action) => {
+      state.loading = true
+    },
+    actionSuccess: (state, action) => {
+      state.search = action.payload.search
+      state.pageSize = action.payload.pageSize
       state.search = action.payload.search
       state.currPage = action.payload.currPage
-      state.pageSize = action.payload.pageSize
-      state.data = action.payload.data
       state.count = action.payload.count
+      state.data = action.payload.data
     },
-
-    remove: (state, action) => {
-      state.data = state.data.filter(x => x.username !== action.payload)
-      localStorage.setItem('users', JSON.stringify(state))
-    },
+    actionFailed: (state, action) => {},
   },
 })
 

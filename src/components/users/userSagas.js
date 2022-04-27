@@ -13,9 +13,9 @@ function* getUsers (action) {
       const tempUser = {...users, currPage: currPage, pageSize: pageSize, search: search}
 
       localStorage.setItem('users', JSON.stringify(tempUser))
-      yield put(userActions.getSuccess({...tempUser, data: pagedUsers}))
+      yield put(userActions.actionSuccess({...tempUser, data: pagedUsers}))
    } catch (error) {
-      yield put(userActions.getFailed(`Something went wrong!`))
+      yield put(userActions.actionFailed(`Something went wrong!`))
    }
 }
 
@@ -36,15 +36,14 @@ function* addUser(action) {
          data: [action.payload]
       }
 
-      const tempUsers = {...users}
-
-      tempUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
-      tempUsers.count = users.count = users.data.length
+      const pagedUsers = {...users}
+      pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
+      pagedUsers.count = users.count = users.data.length
       localStorage.setItem('users', JSON.stringify(users))
 
-      yield put(userActions.addSuccess(tempUsers))
+      yield put(userActions.actionSuccess(pagedUsers))
    } catch (error) {
-      yield put(userActions.addFailed(action.payload))
+      yield put(userActions.actionFailed(action.payload))
    }
 }
 
@@ -54,20 +53,37 @@ function* modifyUser(action) {
       const currPage = users?.currPage ?? 1
       const pageSize = users?.pageSize ?? 10
 
-      // users.data = users.data.filter(x => x.username !== action.payload.username)
-      // users.data.push(action.payload)
       const modifyUser = users.data.find(x => x.username === action.payload.username)
       modifyUser.password = action.payload.password
       modifyUser.email = action.payload.email
+      modifyUser.notes = action.payload.notes
+      // console.log(action.payload.notes)
 
       localStorage.setItem('users', JSON.stringify(users))
 
-      const tempUsers = {...users}
-      tempUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
-      console.log(action.payload)
-      yield put(userActions.modifySuccess(tempUsers))
+      const pagedUsers = {...users}
+      pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
+      yield put(userActions.actionSuccess(pagedUsers))
    } catch {
-      yield put(userActions.modifyFailed(action.payload))
+      yield put(userActions.actionFailed(action.payload))
+   }
+}
+
+function* removeUser(action) {
+   try {
+      let users = JSON.parse(localStorage.getItem('users'))
+      const currPage = users?.currPage ?? 1
+      const pageSize = users?.pageSize ?? 10
+
+      users.data = users.data.filter(x => x.username !== action.payload)
+
+      localStorage.setItem('users', JSON.stringify(users))
+
+      const pagedUsers = {...users}
+      pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
+      yield put(userActions.actionSuccess(pagedUsers))
+   } catch {
+      yield put(userActions.actionFailed(action.payload))
    }
 }
 
@@ -75,6 +91,7 @@ export function* userSaga() {
    yield takeEvery(userActions.add, addUser);
    yield takeLatest(userActions.modify, modifyUser);
    yield takeLatest(userActions.get, getUsers);
+   yield takeLatest(userActions.remove, removeUser);
 }
 
 export default function* rootSaga() {
