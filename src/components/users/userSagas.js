@@ -72,15 +72,21 @@ function* modifyUser(action) {
 function* removeUser(action) {
    try {
       let users = JSON.parse(localStorage.getItem('users'))
-      const currPage = users?.currPage ?? 1
+      let currPage = users?.currPage ?? 1
       const pageSize = users?.pageSize ?? 10
 
       users.data = users.data.filter(x => x.username !== action.payload)
 
-      localStorage.setItem('users', JSON.stringify(users))
+      const totalPage = users.data.length/users.pageSize
 
       const pagedUsers = {...users}
+      if(currPage > totalPage)
+         pagedUsers.currPage = users.currPage = currPage = totalPage
       pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
+      pagedUsers.count = users.count = users.data.length
+
+
+      localStorage.setItem('users', JSON.stringify(users))
       yield put(userActions.actionSuccess(pagedUsers))
    } catch {
       yield put(userActions.actionFailed(action.payload))

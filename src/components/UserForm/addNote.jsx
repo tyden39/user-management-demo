@@ -1,6 +1,6 @@
 import { Button, Form, Input } from "antd";
 
-export default function AddNote ({initValue, onSubmit, onSubmitFaliled, setModalClose}) {
+export default function AddNote ({data, onSubmit, onSubmitFaliled, setModalClose}) {
     
     return (
         <>
@@ -9,13 +9,15 @@ export default function AddNote ({initValue, onSubmit, onSubmitFaliled, setModal
         </div>
         <Form
             name='note'
-            // labelCol={{span:4}}
-            // wrapperCol={{span: 16}}
-            initialValues={initValue}
+            initialValues={data}
             onFinish={onSubmit}
             onFinishFailed={onSubmitFaliled}
             autoComplete="off"
-            >
+        >
+            
+            <Form.Item name="noteID">
+                <Input.TextArea rows={6} hidden/>
+            </Form.Item>
             <Form.Item name="noteContent">
                 <Input.TextArea rows={6}/>
             </Form.Item>

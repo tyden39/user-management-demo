@@ -74,7 +74,7 @@ const Home = () => {
   ];
 
   const getData = () => {
-    return JSON.parse(localStorage.getItem('users')).data
+    return JSON.parse(localStorage.getItem('users'))
   }
 
   return (

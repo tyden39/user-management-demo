@@ -15,16 +15,19 @@ export default function UserForm(props) {
     }
 
     const handleAddNote = (data) => {
-        const newNotes = [...notes, data.noteContent]
+        let newNotes = [...notes]
+        if(notes[data.noteID])
+            newNotes[data.noteID] = data.noteContent
+        else 
+            newNotes.push(data.noteContent)
+
         setNotes(newNotes)
-        setModal({...modal, visible: false})
+        setModal({...modal, visible: false, data: {}})
         form.setFieldsValue({notes: newNotes})
         setDisableSubmit(false)
-
     }
 
     const onChange = (changedValues, allValues) => {
-        // console.log(allValues);
         if (JSON.stringify(initUser) !== JSON.stringify(allValues))
             setDisableSubmit(false)
         else
@@ -32,12 +35,14 @@ export default function UserForm(props) {
     }
 
     const handleEditNote = (item) => {
-        setModal({...modal, visible: true, data: {noteContent: item}})
+        const itemID = notes.findIndex(x => x === item)
+        setModal({...modal, visible: true, data: {noteID: itemID,noteContent: item}})
     }
     
     const handleDeleteNote = (item) => {
         const newNotes = [...notes.filter(x => x !== item)]
         form.setFieldsValue({notes: [...notes.filter(x => x !== item)]})
+        setDisableSubmit(false)
         setNotes(newNotes)
     }
 
@@ -130,7 +135,7 @@ export default function UserForm(props) {
                         bordered
                         dataSource={notes}
                         pagination={{
-                            pageSize: 5
+                            pageSize: 4
                         }}
                         renderItem={item => (
                             <List.Item 
@@ -161,9 +166,9 @@ export default function UserForm(props) {
                 footer={null}
                 width={700}
                 zIndex={1}
-                onCancel={() => setModal({...modal, visible: false})}
-                >
-                    <AddNote initValue={modal.data} onSubmit={handleAddNote} onSubmitFaliled={() => {}}/>
+                onCancel={() => setModal({...modal, visible: false, data: {}})}
+            >
+                <AddNote data={modal.data} onSubmit={handleAddNote} onSubmitFaliled={() => {}}/>
             </Modal>
         </>
     )
