@@ -4,45 +4,66 @@ import AddNote from './addNote';
 
 export default function UserForm(props) {
 
-    const { onSubmit, onSubmitFaliled, initUser = {username: '', password: '', email: '', notes: []}, type, title } = props
-    const [modal, setModal] = useState({title: '', visible: false, type: '', data: {}})
+    const { onSubmit, onSubmitFaliled, initUser = { username: '', password: '', email: '', notes: [] }, type, title } = props
+    const [modal, setModal] = useState({ title: '', visible: false, type: '', data: {} })
     const [notes, setNotes] = useState([...initUser.notes])
-    const [disableSubmit, setDisableSubmit] = useState(true)
+    const [formFilled, setFormFilled] = useState(false)
     const [form] = Form.useForm()
-    
+    const [formValidate, setFormValidate] = useState({userID: {vailidate: false, message: "Your username is invalid!"}})
+
+    const handleSubmit = (data) => {
+        if (!existUsername(data.username))
+            onSubmit(data)
+    }
+
+    const existUsername = (username) => {
+
+    }
+
     const showNoteForm = () => {
-        setModal({...modal, visible: true})
+        setModal({ ...modal, visible: true })
     }
 
     const handleAddNote = (data) => {
-        let newNotes = [...notes]
-        if(notes[data.noteID])
-            newNotes[data.noteID] = data.noteContent
-        else 
-            newNotes.push(data.noteContent)
+        if (!data.noteContent) {
+            const newNotes = [...notes]
+            newNotes.splice(data.noteID, 1)
 
-        setNotes(newNotes)
-        setModal({...modal, visible: false, data: {}})
-        form.setFieldsValue({notes: newNotes})
-        setDisableSubmit(false)
+            form.setFieldsValue({ notes: newNotes })
+            setNotes(newNotes)
+
+            setModal({ ...modal, visible: false, data: {} })
+            setFormFilled(true)
+        } else {
+            let newNotes = [...notes]
+            if (notes[data.noteID])
+                newNotes[data.noteID] = data.noteContent
+            else
+                newNotes.push(data.noteContent)
+            
+            setNotes(newNotes)
+            setModal({ ...modal, visible: false, data: {} })
+            form.setFieldsValue({ notes: newNotes })
+            setFormFilled(true)
+        }
     }
 
     const onChange = (changedValues, allValues) => {
         if (JSON.stringify(initUser) !== JSON.stringify(allValues))
-            setDisableSubmit(false)
+            setFormFilled(true)
         else
-            setDisableSubmit(true)
+            setFormFilled(false)
     }
 
     const handleEditNote = (item) => {
         const itemID = notes.findIndex(x => x === item)
-        setModal({...modal, visible: true, data: {noteID: itemID,noteContent: item}})
+        setModal({ ...modal, visible: true, data: { noteID: itemID, noteContent: item } })
     }
-    
+
     const handleDeleteNote = (item) => {
         const newNotes = [...notes.filter(x => x !== item)]
-        form.setFieldsValue({notes: [...notes.filter(x => x !== item)]})
-        setDisableSubmit(false)
+        form.setFieldsValue({ notes: [...notes.filter(x => x !== item)] })
+        setFormFilled(true)
         setNotes(newNotes)
     }
 
@@ -77,7 +98,7 @@ export default function UserForm(props) {
                         },
                     ]}
                 >
-                    <Input value={initUser?.username} disabled={type === 'modify' ? true : false}/>
+                    <Input value={initUser?.username} disabled={type === 'modify' ? true : false} />
                 </Form.Item>
 
                 <Form.Item
@@ -106,57 +127,45 @@ export default function UserForm(props) {
                     <Input />
                 </Form.Item>
 
-                <Form.Item
-                    wrapperCol={{
-                        offset: 4,
-                        span: 16,
-                    }}
-                >
-                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                        <Button onClick={showNoteForm}>
-                            Add Notes
-                        </Button>
-
-                        <Button type="primary" htmlType="submit" disabled={disableSubmit}>
+                <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Button onClick={showNoteForm}>Add Notes</Button>
+                        <Button type="primary" htmlType="submit" disabled={!formFilled}>
                             {type === 'add' ? 'Add' : 'Save'}
                         </Button>
                     </div>
                 </Form.Item>
-                
-                <Form.Item 
+
+                <Form.Item
                     name="notes"
-                    wrapperCol={{
-                        span: 24,
-                    }}
+                    wrapperCol={{ span: 24 }}
                 >
-                    {notes && 
+                    {notes &&
                         <List
-                        header={<h1>Notes</h1>}
-                        bordered
-                        dataSource={notes}
-                        pagination={{
-                            pageSize: 4
-                        }}
-                        renderItem={item => (
-                            <List.Item 
-                                extra={
-                                    <div>
-                                        <Button onClick={() => handleEditNote(item)}>Edit</Button>
-                                        <Popconfirm
-                                            placement="topRight"
-                                            title="Are you sure to delete this note?"
-                                            onConfirm={() => handleDeleteNote(item)}
-                                            okText="Ok"
-                                            cancelText="Cancel"
-                                        >
-                                            <Button danger>Delete</Button>
-                                        </Popconfirm>
-                                    </div>
-                                }>
-                                {item}
-                            </List.Item>
-                        )}
-                    />}
+                            header={<h1>Notes</h1>}
+                            bordered
+                            dataSource={notes}
+                            pagination={{ pageSize: 4 }}
+                            renderItem={item => (
+                                <List.Item
+                                    extra={
+                                        <div>
+                                            <Button onClick={() => handleEditNote(item)}>Edit</Button>
+                                            <Popconfirm
+                                                placement="topRight"
+                                                title="Are you sure to delete this note?"
+                                                onConfirm={() => handleDeleteNote(item)}
+                                                okText="Ok"
+                                                cancelText="Cancel"
+                                            >
+                                                <Button danger>Delete</Button>
+                                            </Popconfirm>
+                                        </div>
+                                    }>
+                                    {item}
+                                </List.Item>
+                            )}
+                        />}
                 </Form.Item>
             </Form>
 
@@ -166,9 +175,9 @@ export default function UserForm(props) {
                 footer={null}
                 width={700}
                 zIndex={1}
-                onCancel={() => setModal({...modal, visible: false, data: {}})}
+                onCancel={() => setModal({ ...modal, visible: false, data: {} })}
             >
-                <AddNote data={modal.data} onSubmit={handleAddNote} onSubmitFaliled={() => {}}/>
+                <AddNote data={modal.data} onSubmit={handleAddNote} onSubmitFaliled={() => {}} />
             </Modal>
         </>
     )

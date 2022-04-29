@@ -10,6 +10,8 @@ export default function AddUser(props) {
         // for(let i = 0; i < 200; i++ ) {
         //     dispatch(userActions.add({...data, username: i}))
         // }
+
+        
         
         dispatch(userActions.add(data))
         setModalClose(false)
