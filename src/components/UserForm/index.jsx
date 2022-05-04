@@ -4,21 +4,20 @@ import AddNote from './addNote';
 
 export default function UserForm(props) {
 
-    const { onSubmit, onSubmitFaliled, initUser = { username: '', password: '', email: '', notes: [] }, type, title } = props
+    const { formValidate, onSubmit, onSubmitFaliled, initUser = { username: '', password: '', email: '', notes: [] }, type, title } = props
     const [modal, setModal] = useState({ title: '', visible: false, type: '', data: {} })
     const [notes, setNotes] = useState([...initUser.notes])
     const [formFilled, setFormFilled] = useState(false)
     const [form] = Form.useForm()
-    const [formValidate, setFormValidate] = useState({userID: {vailidate: false, message: "Your username is invalid!"}})
 
-    const handleSubmit = (data) => {
-        if (!existUsername(data.username))
-            onSubmit(data)
-    }
+    // const handleSubmit = (data) => {
+    //     if (!existUsername(data.username))
+    //         onSubmit(data)
+    // }
 
-    const existUsername = (username) => {
+    // const existUsername = (username) => {
 
-    }
+    // }
 
     const showNoteForm = () => {
         setModal({ ...modal, visible: true })
@@ -97,6 +96,8 @@ export default function UserForm(props) {
                             message: 'Please input your username!',
                         },
                     ]}
+                    validateStatus={formValidate?.username ? 'error' : ''}
+                    help={formValidate?.username}
                 >
                     <Input value={initUser?.username} disabled={type === 'modify' ? true : false} />
                 </Form.Item>

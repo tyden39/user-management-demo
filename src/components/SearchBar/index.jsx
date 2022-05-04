@@ -1,6 +1,6 @@
 import { Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../users/userSlice";
+import { userActions } from "../redux/userSlice";
 
 
 export default function SearchBar() {

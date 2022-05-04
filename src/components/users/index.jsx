@@ -5,7 +5,7 @@ import { ExportCSV } from '../ExportCSV';
 import SearchBar from '../SearchBar';
 import AddUser from './AddUser';
 import ModifyUser from './ModifyUser';
-import { remove, userActions } from './userSlice';
+import { remove, userActions } from '../redux/userSlice';
 
 const Home = () => {
 

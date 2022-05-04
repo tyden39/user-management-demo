@@ -9,7 +9,9 @@ const initialState = {
   currPage: users?.currPage ?? 1,
   pageSize: users?.pageSize ?? 10,
   count: users?.count ?? 0,
-  data: users?.data ? users.data.slice((users.currPage - 1) * users.pageSize, users.currPage * users.pageSize) : []
+  data: users?.data ? users.data.slice((users.currPage - 1) * users.pageSize, users.currPage * users.pageSize) : [],
+  errors: [],
+  success: false
 }
 
 export const userSlice = createSlice({
@@ -21,6 +23,7 @@ export const userSlice = createSlice({
     },
     add: (state) => {
       state.loading = true
+      state.success = false
     },
     modify: (state, action) => {
       state.loading = true
@@ -35,8 +38,12 @@ export const userSlice = createSlice({
       state.currPage = action.payload.currPage
       state.count = action.payload.count
       state.data = action.payload.data
+      state.errors = []
+      state.success = true
     },
-    actionFailed: (state, action) => {},
+    actionFailed: (state, action) => {
+      state.errors = [{field: action.payload.errorField, message: action.payload.errorMessage}]
+    },
   },
 })
 
