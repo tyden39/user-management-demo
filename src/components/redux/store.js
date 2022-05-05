@@ -11,5 +11,3 @@ export const store = configureStore({
 })
 
 sagaMiddleware.run(rootSaga)
-
-const action = type => store.dispatch({type})

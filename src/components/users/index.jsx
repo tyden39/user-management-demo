@@ -2,10 +2,9 @@ import { Button, Modal, Pagination, Popconfirm, Space, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExportCSV } from '../ExportCSV';
-import SearchBar from '../SearchBar';
+import SearchBar from './SearchBar';
 import AddUser from './AddUser';
 import ModifyUser from './ModifyUser';
-import { remove, userActions } from '../redux/userSlice';
 
 const Home = () => {
 
@@ -14,11 +13,11 @@ const Home = () => {
   const [modal, setModal] = useState({title: '', visible: false, type: '', data: {}})
 
   const handleDelete = (username) => {
-    dispatch(remove(username))
+    dispatch({type: 'users/remove', payload: username})
   }
 
   const onChangePage = (page, pageSize) => {
-    dispatch(userActions.get({currPage: page, pageSize: pageSize}))
+    dispatch({type: 'users/get', payload: {currPage: page, pageSize: pageSize}})
   }
   
   const handleAdd = (username) => {
@@ -80,7 +79,7 @@ const Home = () => {
   useEffect(() => {
     switch (users.status) {
       case 'success':
-        dispatch(userActions.actionFinish())
+        dispatch({type: 'users/finish'})
         setModal({...modal, visible: false})
         break;
     
@@ -106,7 +105,7 @@ const Home = () => {
           zIndex={1}
           onCancel={() => {
             setModal({...modal, visible: false});
-            dispatch(userActions.actionFinish())
+            dispatch({type: 'users/finish'})
           }}
         >
           {modal.type === 'add' && <AddUser />}

@@ -1,7 +1,6 @@
 import { put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { userActions } from '../redux/userSlice';
 
-function* getUsers (action) {
+function* getUsers(action) {
    try {
       let users = JSON.parse(localStorage.getItem('users'))
       const search = action.payload.search ?? users.search
@@ -10,12 +9,14 @@ function* getUsers (action) {
 
       const filteredUsers = users.data.filter(x => x.username.toString().includes(search))
       const pagedUsers = filteredUsers.slice((currPage - 1) * pageSize, currPage * pageSize)
-      const tempUser = {...users, currPage: currPage, pageSize: pageSize, search: search}
+      const tempUser = { ...users, currPage: currPage, pageSize: pageSize, search: search }
 
       localStorage.setItem('users', JSON.stringify(tempUser))
-      yield put(userActions.actionSuccess({...tempUser, data: pagedUsers}))
+      yield put({ type: 'users/success', payload: { ...tempUser, data: pagedUsers } })
+      // yield put(userActions.actionSuccess({...tempUser, data: pagedUsers}))
    } catch (error) {
-      yield put(userActions.actionFailed({field: "userID", message: error}))
+      yield put({ type: 'users/failed', payload: { field: "userID", message: error } })
+      // yield put(userActions.actionFailed({field: "userID", message: error}))
    }
 }
 
@@ -33,15 +34,15 @@ function* addUser(action) {
             data: [],
             errors: [],
             success: false
-          }
+         }
       }
 
-      let users = {...jsonUsers, data: [...jsonUsers.data]}
+      let users = { ...jsonUsers, data: [...jsonUsers.data] }
       const currPage = users?.currPage ?? 1
       const pageSize = users?.pageSize ?? 10
 
-      if (users) 
-        users.data.unshift({...action.payload, createdAt: Date.now(), updatedAt: Date.now()})
+      if (users)
+         users.data.unshift({ ...action.payload, createdAt: Date.now(), updatedAt: Date.now() })
       else users = {
          loading: false,
          search: '',
@@ -51,21 +52,21 @@ function* addUser(action) {
          data: [action.payload]
       }
 
-      const pagedUsers = {...users}
+      const pagedUsers = { ...users }
       pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
       pagedUsers.count = users.count = users.data.length
 
       if (checkExistUsername(action.payload.username, jsonUsers.data)) {
-         throw new Error(JSON.stringify({errorField: 'username', errorMessage: 'Username already exist!'}));
+         throw new Error(JSON.stringify({ errorField: 'username', errorMessage: 'Username already exist!' }));
       } else {
          localStorage.setItem('users', JSON.stringify(users))
-         yield put(userActions.actionSuccess(pagedUsers))
+         yield put({ type: 'users/success', payload: pagedUsers })
       }
    }
    catch (error) {
       // console.log(JSON.parse(error.message));
       const errorMessage = JSON.parse(error.message)
-      yield put(userActions.actionFailed({...errorMessage}))
+      yield put({ type: 'users/failed', payload: { ...errorMessage } })
    }
 }
 
@@ -85,17 +86,18 @@ function* modifyUser(action) {
       modifyUser.email = action.payload.email
       modifyUser.notes = action.payload.notes
       modifyUser.updatedAt = Date.now()
-      
 
-      users.data = users.data.sort((a,b) => b.updatedAt - a.updatedAt)
+
+      users.data = users.data.sort((a, b) => b.updatedAt - a.updatedAt)
       console.log(users.data)
       localStorage.setItem('users', JSON.stringify(users))
 
-      const pagedUsers = {...users}
+      const pagedUsers = { ...users }
       pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
-      yield put(userActions.actionSuccess(pagedUsers))
-   } catch {
-      yield put(userActions.actionFailed(action.payload))
+      yield put({ type: 'users/success', payload: pagedUsers })
+   } catch (error) {
+      const errorMessage = JSON.parse(error.message)
+      yield put({ type: 'users/failed', payload: { ...errorMessage } })
    }
 }
 
@@ -107,24 +109,25 @@ function* removeUser(action) {
 
       users.data = users.data.filter(x => x.username !== action.payload)
 
-      const totalPage = Math.ceil(users.data.length/users.pageSize)
+      const totalPage = Math.ceil(users.data.length / users.pageSize)
 
-      const pagedUsers = {...users}
-      if(currPage > totalPage)
+      const pagedUsers = { ...users }
+      if (currPage > totalPage)
          pagedUsers.currPage = users.currPage = currPage = totalPage
       pagedUsers.data = users.data.slice((currPage - 1) * pageSize, currPage * pageSize)
       pagedUsers.count = users.count = users.data.length
 
       localStorage.setItem('users', JSON.stringify(users))
-      yield put(userActions.actionSuccess(pagedUsers))
-   } catch {
-      yield put(userActions.actionFailed(action.payload))
+      yield put({ type: 'users/success', payload: pagedUsers })
+   } catch(error) {
+      const errorMessage = JSON.parse(error.message)
+      yield put({ type: 'users/failed', payload: { ...errorMessage } })
    }
 }
 
 export function* userSaga() {
-   yield takeEvery(userActions.add, addUser);
-   yield takeLatest(userActions.modify, modifyUser);
-   yield takeLatest(userActions.get, getUsers);
-   yield takeLatest(userActions.remove, removeUser);
+   yield takeEvery('users/add', addUser);
+   yield takeLatest('users/modify', modifyUser);
+   yield takeLatest('users/get', getUsers);
+   yield takeLatest('users/remove', removeUser);
 }

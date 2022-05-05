@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import UserForm from "../UserForm";
-import { userActions } from "../redux/userSlice";
+import UserForm from "./UserForm";
 
 export default function ModifyUser(props) {
     const dispatch = useDispatch()
@@ -11,7 +10,7 @@ export default function ModifyUser(props) {
 
     const handleSubmit = (data) => {
         // console.log(data)
-        dispatch(userActions.modify(data))
+        dispatch({type: 'users/modify', payload: data})
         setModalClose(false)
     }
 

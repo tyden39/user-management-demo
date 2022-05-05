@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
-import UserForm from "../UserForm";
-import { userActions } from "../redux/userSlice";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import UserForm from "./UserForm";
 
 export default function AddUser(props) {
     const dispatch = useDispatch()
@@ -14,7 +13,7 @@ export default function AddUser(props) {
         //     dispatch(userActions.add({...data, username: i.toString(), createdAt: Date.now(), updatedAt: Date.now()}))
         // }
 
-        dispatch(userActions.add(data))
+        dispatch({ type: 'users/add', payload: data })
     }
 
     const onSubmitFailed = (errorInfo) => {
