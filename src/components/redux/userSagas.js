@@ -1,4 +1,4 @@
-import { all, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { userActions } from '../redux/userSlice';
 
 function* getUsers (action) {
@@ -56,14 +56,16 @@ function* addUser(action) {
       pagedUsers.count = users.count = users.data.length
 
       if (checkExistUsername(action.payload.username, jsonUsers.data)) {
-         throw new Error({errorField: 'username', errorMessage: 'error.errorMessage'});
+         throw new Error(JSON.stringify({errorField: 'username', errorMessage: 'Username already exist!'}));
       } else {
          localStorage.setItem('users', JSON.stringify(users))
          yield put(userActions.actionSuccess(pagedUsers))
       }
    }
    catch (error) {
-      yield put(userActions.actionFailed({errorField: error.errorField, errorMessage: error.errorMessage}))
+      // console.log(JSON.parse(error.message));
+      const errorMessage = JSON.parse(error.message)
+      yield put(userActions.actionFailed({...errorMessage}))
    }
 }
 
@@ -125,8 +127,4 @@ export function* userSaga() {
    yield takeLatest(userActions.modify, modifyUser);
    yield takeLatest(userActions.get, getUsers);
    yield takeLatest(userActions.remove, removeUser);
-}
-
-export default function* rootSaga() {
-   yield all([userSaga()]);
 }

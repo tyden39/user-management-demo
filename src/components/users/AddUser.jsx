@@ -4,7 +4,6 @@ import { userActions } from "../redux/userSlice";
 import { useEffect, useState } from "react";
 
 export default function AddUser(props) {
-    const { setModalClose } = props
     const dispatch = useDispatch()
     const users = useSelector((state) => state.users)
 
@@ -28,11 +27,9 @@ export default function AddUser(props) {
             errors[item.field] = item.message
         })
         setFormValidate(errors)
+        console.log('object');
+    }, [users])
 
-        if(users.success) setModalClose(false)
-        
-    }, [users,setModalClose])
-    
     return (
         <UserForm title='User Add' type='add' onSubmit={handleSubmit} onSubmitFailed={onSubmitFailed} formValidate={formValidate}/>
     )

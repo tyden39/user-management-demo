@@ -1,51 +1,3 @@
-// import { Button } from 'antd';
-// import * as FileSaver from 'file-saver';
-// import React from 'react';
-// import * as XLSX from 'xlsx';
-
-// export const ExportCSV = ({getData, fileName}) => {
-
-//     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-//     const fileExtension = '.xlsx';
-
-//     const convertNotesToWorkSheet = (users) => {
-//         let noteWS = users.map(x => [x.username, x.password, x.email, 
-//                                         {t: "s",v: `asdf\r\nasdf`}
-//                                     ])
-//         console.log(noteWS[0]);
-//         noteWS.forEach(x => x.s = {alignment: {wrapText: true}})
-//         // if (notes.length) 
-//         //     return notes.reduce((prev, curr) => prev + ',' + curr)
-//         // else return ''
-//         return noteWS
-//     }
-
-//     const exportToCSV = async (getData, fileName) => {
-//         const convertData = convertNotesToWorkSheet(getData().data)
-//         const ws = XLSX.utils.aoa_to_sheet(convertData);
-
-//         // const fetchData = getData()
-//         // const csvData = fetchData.data
-//         // console.log(csvData)
-//         // const ws = XLSX.utils.json_to_sheet(csvData);
-//         // ws["D1"].s = {alignment: {wrapText: true}}
-//         // const wsReCal = XLSX.utils.sheet_set_array_formula(ws, "D1:D3", '"asdf"&CHAR(10)&"asdf"');
-
-//         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-//         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-//         const data = new Blob([excelBuffer], {type: fileType});
-        
-//         FileSaver.saveAs(data, fileName + fileExtension);
-//     }
-
-    
-
-//     return (
-//         <Button variant="warning" onClick={(e) => exportToCSV(getData, fileName)}>Export</Button>
-//     )
-// }
-
-
 import { Button } from 'antd';
 import * as Excel from "exceljs";
 import * as FileSaver from 'file-saver';
@@ -53,15 +5,28 @@ import * as FileSaver from 'file-saver';
 export const ExportCSV = ({getData, fileName}) => {
 
     const convertNotesToWorkSheet = (users) => {
-        let noteWS = users.map(x => [x.username, x.password, x.email, 
-                                        (x.notes.length ? x.notes.reduce((p,c,i) => `${p}\r\n${c}`) : '')
-                                    ])
-        console.log(noteWS[0]);
-        return noteWS
+        // console.log(typeof(users[0].updatedAt));
 
-        // if (notes.length) 
-        //     return notes.reduce((prev, curr) => prev + ',' + curr)
-        // else return ''
+        let noteWS = users.map(x => {
+            const updatedAt = new Date(x.updatedAt)
+            const updatedDate = `${updatedAt.getDate() < 10 ? `0${updatedAt.getDate()}` : updatedAt.getDate()}`
+            const updatedMonth = `${updatedAt.getMonth() < 10 ? `0${updatedAt.getMonth()}` : updatedAt.getMonth()}`
+            const updatedMinutes = `${updatedAt.getMinutes() < 10 ? `0${updatedAt.getMinutes()}` : updatedAt.getMinutes()}`
+            const updatedSeconds = `${updatedAt.getSeconds() < 10 ? `0${updatedAt.getSeconds()}` : updatedAt.getSeconds()}`
+
+            return [
+                x.username, 
+                x.password, 
+                x.email, 
+                (x.notes.length ? x.notes.reduce((p,c,i) => `${p}\r\n${c}`) : ''),
+                `${updatedDate}/${updatedMonth}/${updatedAt.getFullYear()}`,
+                `${updatedMinutes} : ${updatedSeconds}`,
+            ]
+        })
+
+        // console.log(noteWS[0]);
+        
+        return noteWS
     }
 
     const exportToCSV = async (getData, fileName) => {
@@ -70,17 +35,54 @@ export const ExportCSV = ({getData, fileName}) => {
 
         // Create workbook & add worksheet
         const workbook = new Excel.Workbook();
-        const worksheet = workbook.addWorksheet('ExampleSheet');
+        const worksheet = workbook.addWorksheet('Users');
 
         // add column headers
         worksheet.columns = [
             { header: 'Username', key: 'username', width: 10 },
             { header: 'Password', key: 'password', width: 10 },
             { header: 'Email', key: 'email', width: 20 },
-            { header: 'Notes', key: 'notes', width: 30 }
+            { header: 'Notes', key: 'notes', width: 30 },
+            { key: 'updatedDate', width: 12 },
+            { key: 'updatedTime', width: 6 },
         ];
 
+        worksheet.mergeCells('A1:A2')
+        worksheet.mergeCells('B1:B2')
+        worksheet.mergeCells('C1:C2')
+        worksheet.mergeCells('D1:D2')
+        worksheet.mergeCells('E1:F1')
+
         worksheet.getColumn('notes').alignment = { wrapText: true }
+
+        worksheet.getCell('E1').value = 'Updated At';
+        worksheet.getCell('E2').value = 'Date';
+        worksheet.getCell('F2').value = 'Time';
+
+        worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('B2').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('D2').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('E1').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('E2').alignment = { vertical: 'middle', horizontal: 'center' };
+        worksheet.getCell('F2').alignment = { vertical: 'middle', horizontal: 'center' };
+
+        worksheet.getRows(1, 2).forEach(row => {
+            row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                // console.log('Cell ' + colNumber + ' = ' + cell.value);
+                cell.fill = {
+                    type: 'pattern',
+                    pattern:'solid',
+                    fgColor:{argb:'d3d3d3'}
+                };
+            });
+        });
+        
+        // Commit a completed row to stream
+        // row.commit();
+
+        // ... merged cells are linked
+        // worksheet.getCell('A4').value = 'Hello, World!';
 
         // Add row using key mapping to columns
         // worksheet.addRow({ username: {formula: 'A3&CHAR(10)&A4'}, password: "Author 1", email: 'asdf@sdf.com', notes: 'asdf\r\nafdsf' });
@@ -94,7 +96,6 @@ export const ExportCSV = ({getData, fileName}) => {
         //     { package_name: "PQR", author_name: "Author 5" }
         // ];
 
-        worksheet.getColumn(5).values = [1,2,3]
         const rows = convertNotesToWorkSheet(users)
         worksheet.addRows(rows);
 

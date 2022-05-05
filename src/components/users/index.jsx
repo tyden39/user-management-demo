@@ -1,5 +1,5 @@
 import { Button, Modal, Pagination, Popconfirm, Space, Table } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExportCSV } from '../ExportCSV';
 import SearchBar from '../SearchBar';
@@ -31,7 +31,7 @@ const Home = () => {
 
   const columns = [
     {
-      title: 'UserName',
+      title: 'Username',
       dataIndex: 'username',
       key: 'username',
       // sorter: (a, b) => a.username.toString().localeCompare(b.username),
@@ -77,6 +77,18 @@ const Home = () => {
     return JSON.parse(localStorage.getItem('users'))
   }
 
+  useEffect(() => {
+    switch (users.status) {
+      case 'success':
+        dispatch(userActions.actionFinish())
+        setModal({...modal, visible: false})
+        break;
+    
+      default:
+        break;
+    }
+  }, [users,dispatch,modal])
+
   return (
     <>
       <div className="title">
@@ -92,9 +104,12 @@ const Home = () => {
           footer={null}
           width={700}
           zIndex={1}
-          onCancel={() => setModal({...modal, visible: false})}
+          onCancel={() => {
+            setModal({...modal, visible: false});
+            dispatch(userActions.actionFinish())
+          }}
         >
-          {modal.type === 'add' && <AddUser setModalClose={(status) => setModal({...modal, visible: status})}/>}
+          {modal.type === 'add' && <AddUser />}
           {modal.type === 'modify' && <ModifyUser data={modal.data} setModalClose={(status) => setModal({...modal, visible: status})}/>}
         </Modal>
       </div>

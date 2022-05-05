@@ -11,7 +11,7 @@ const initialState = {
   count: users?.count ?? 0,
   data: users?.data ? users.data.slice((users.currPage - 1) * users.pageSize, users.currPage * users.pageSize) : [],
   errors: [],
-  success: false
+  status: 'normal'
 }
 
 export const userSlice = createSlice({
@@ -23,7 +23,7 @@ export const userSlice = createSlice({
     },
     add: (state) => {
       state.loading = true
-      state.success = false
+      state.status = 'loading'
     },
     modify: (state, action) => {
       state.loading = true
@@ -32,18 +32,23 @@ export const userSlice = createSlice({
       state.loading = true
     },
     actionSuccess: (state, action) => {
-      state.search = action.payload.search
       state.pageSize = action.payload.pageSize
       state.search = action.payload.search
       state.currPage = action.payload.currPage
       state.count = action.payload.count
       state.data = action.payload.data
       state.errors = []
-      state.success = true
+      state.status = 'success'
+      state.loading = false
     },
     actionFailed: (state, action) => {
       state.errors = [{field: action.payload.errorField, message: action.payload.errorMessage}]
+      state.loading = false
     },
+    actionFinish: (state, action) => {
+      state.status = 'normal'
+      state.errors = []
+    }
   },
 })
 
@@ -52,3 +57,4 @@ export const userActions = userSlice.actions
 export const { addSuccess: add, add: addUser, remove, modifySuccess: modify } = userSlice.actions
 
 export default userSlice.reducer
+
